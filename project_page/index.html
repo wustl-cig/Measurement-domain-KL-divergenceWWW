@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+          content="Calculating the distribution shift in term of KL divergence using only corrupted data">
+    <meta name="author" content="Shirin Shoushtari,
+    Edward P. Chandler,
+    Yuanhao Wang,
+    M. Salman Asif, 
+    Ulugbek S. Kamilov">
+
+    <title>Unsupervised Detection of Distribution Shift in Inverse Problems using Diffusion Models</title>
+    <!-- Bootstrap core CSS -->
+    <!--link href="bootstrap.min.css" rel="stylesheet"-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Custom styles for this template -->
+    <link href="offcanvas.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="src/css/style.css">
+
+<!--    <script type="text/javascript" async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML"></script>-->
+    <!--    <link rel="icon" href="img/favicon.gif" type="image/gif">-->
+</head>
+
+<body>
+
+<div class="jumbotron jumbotron-fluid">
+    <div class="container"></div>
+    <h2>Unsupervised Detection of Distribution Shift in Inverse Problems using Diffusion Models</h2> <h2></h2>
+    <h3></h3> 
+            <p class="abstract"><b> Measuring distribution shift using only corrupted measurements </b></p>
+    <hr>
+    <p class="authors">
+        <a href="https://shirinsg.github.io"> Shirin Shoushtari*<sup>1</sup></a>,
+        <a href="https://edchandler00.github.io"> Edward P. Chandler<sup>1</sup></a>,
+        <a href="https://yuanhaowang1213.github.io"> Yuanhao Wang<sup>1</sup></a>,</br>
+        <a href="https://intra.ece.ucr.edu/~sasif/"> M. Salman Asif<sup>2</sup></a>,
+        <a href="https://ukmlv.github.io"> Ulugbek S. Kamilov<sup>1</sup></a> </br>
+    </p>
+    <p>
+        <a><sup>1</sup>Washington University in St.Louis, MO, USA</a></br>
+        <a><sup>2</sup>University of California Riverside, CA, USA</a></br>
+    </p>
+
+    <div class="btn-group" role="group" aria-label="Top menu">
+        
+        <a class="btn btn-primary" href="https://arxiv.org/pdf/2505.11482">Paper (arxiv)</a>
+        <a class="btn btn-primary" href="https://github.com/wustl-cig/Measurement-domain-KL-divergence">Code</a>
+      
+    </div>
+
+    
+</div>
+
+<div class="container">
+    <div class="section">
+
+ <div class="row align-items-center">
+            <div class="col justify-content-center text-left">
+                <img src="./img/fig1_v4.png" style="width:100%" alt="Banner">
+                <p><b>Figure 1:</b>  Comparison of the distribution shift (dashed lines), computed using clean images, and our proposed measurement-domain KL metric (solid lines) between an InD model trained on FFHQ and OOD models trained on MetFaces, AFHQ, and Microscopy. Results are shown under inpainting masks with \( p \in \{0.2, 0.5, 0.8\} \). The vertical axis shows \( \mathrm{KL} \), evaluated as the integrand in equations (9) and (4) of the paper up to diffusion noise level \( \sigma \). Right: Samples from InD and OOD datasets. Note how the proposed metric accurately tracks the KL divergence, even under high-levels of corruption (smaller values of \( p \)). </p>
+            </div>
+        </div>
+
+
+        <div class="row align-items-center">
+			<div class="col justify-content-center text-lef">
+                <img src="./img/fig3_v3.png" style="width:100%" alt="Banner">
+                <p><b>Figure 2:</b> KL divergence plotted against the noise level <span>\( \sigma \)</span> for InD and OOD Gaussian mixture models (GMMs). KL divergence computed in the image domain (blue) and measurement domain (red) under inpainting corruption with probability <span>\( p \)</span>, using <span>\( N \)</span> InD data examples. The measurement-domain KL divergence closely tracks its image-domain counterpart, and the approximation improves with increasing <span>\( N \)</span> and <span>\( p \)</span>.
+
+                </p>
+            </div>
+        </div>
+
+       
+
+        <br>
+        <h2>Abstract</h2>
+        <hr>
+        <p>
+            Diffusion models are widely used as priors in imaging inverse problems. However, their performance often degrades under distribution shifts between the training and test-time images. Existing methods for identifying and quantifying distribution shifts typically require access to clean test images, which are almost never available while solving inverse problems (at test time). We propose a fully <em> unsupervised</em> metric for estimating distribution shifts using <em>only</em> indirect (corrupted) measurements and score functions from diffusion models trained on different datasets. We theoretically show that this metric estimates the KL divergence between the training and test image distributions. Empirically, we show that our score-based metric, using only corrupted measurements, closely approximates the  KL divergence computed from clean images. Motivated by this result, we show that aligning the out-of-distribution score with the in-distribution score---using only corrupted measurements---reduces the KL divergence and leads to improved reconstruction quality across multiple inverse problems.        </p>
+    </div>
+
+
+    <div class="section">
+        <h2> Theoretical Result</h2>
+        <hr>
+
+        <p>
+            <b>Theorem 1.</b> Let \( \bar{\mathbf{y}}_\sigma = \mathbf{P} \bar{\mathbf{x}} + \bar{\mathbf{n}} \) denote the noisy projected measurements at noise level \( \sigma \) according to Eq. (8). Then, the KL divergence between the InD density \( p(\mathbf{x}) \) and the OOD density \( q(\mathbf{x}) \) can be expressed as
+          </p>
+          
+          <p>
+            \[
+              \mathrm{KL}(p(\mathbf{x}) \| q(\mathbf{x})) = \int_0^\infty \mathbb{E} \left[ \left\| \mathbf{W} \left( \nabla \log p_\sigma(\mathbf{V} \bar{\mathbf{y}}_\sigma) - \nabla \log q_\sigma(\mathbf{V} \bar{\mathbf{y}}_\sigma) \right) \right\|_2^2 \right] \sigma~ \mathrm{d}\sigma,
+            \]
+          </p>
+          
+          <p>
+            where \( \mathbf{W} = \mathbb{E}[\mathbf{P}]^{-3/2} \) is a diagonal scaling matrix, \( \mathbf{V} \) is the right singular vector from the SVD of \( \mathbf{H} \), and the expectation is taken over \( \mathbf{P} \) and \( \bar{\mathbf{y}} \sim p(\bar{\mathbf{y}}| \mathbf{P}) \).
+          </p>
+ 
+    </div>
+
+    <div class="section">
+        <h2> Distribution shift in MRI subsampled measurments </h2>
+        <hr>
+        <figure style="text-align: center;">
+            <img src="img/fig2_v4.png" alt="Description" style="width: 50%;" />
+            <figcaption style="text-align: justify; margin: auto;">
+                <b>Figure 3:</b> Comparison of the distribution shift (dashed lines), computed using clean images, and our proposed measurement-domain KL metric (solid lines) between an InD model trained on Brain slices and OOD models trained on Knee and Prostate slices from the fastMRI dataset with acceleration rate \( 4 \). The vertical axis shows \( \mathrm{KL} \) up to diffusion noise level \( \sigma \). The proposed metric accurately tracks the KL divergence.
+            </figcaption>
+          </figure>
+
+    </div>
+    
+    <div class="section">
+        <h2> Adaptation from corrupted measurements: Impact on distribution shift and performance in inverse problems
+        </h2>
+        <hr>
+        <figure style="text-align: center;">
+            <img src="img/fig5_v2.png" alt="Description" style="width: 50%;" />
+            <figcaption style="text-align: justify; margin: auto;">
+                <b>Figure 4:</b> \( \mathrm{KL} \) between FFHQ and AFHQ, as well as adapted models using 64 and 128 projected measurements, measured in the image domain (dashed) and the measurement domain (solid) for inpainting with \( p = 0.8 \). Notably, adapting the network using only projected measurements significantly reduces the distributional gap.
+            </figcaption>
+          </figure>
+
+          <figure style="text-align: center;">
+            <img src="img/imgs_DPS_inpaint.png" alt="Description" style="width: 100%;" />
+            <figcaption style="text-align: justify; margin: auto;">
+                <b>Figure 5:</b> Visual comparison of inpainting results (DPS) on an FFHQ image with mask rate \( p = 0.8 \) and measurement noise level \( \sigma = 0.01 \). The top row shows full reconstructions, while the bottom row displays residual maps (left) and zoomed-in regions (right). Note the performance gap between the InD and OOD models, and the improvement achieved by adapting the OOD models using only corrupted measurements.
+            </figcaption>
+          </figure>
+
+    </div>
+    
+
+    <div class="section">
+        <h2>Paper</h2>
+        <hr>
+        <div>
+            <div style="display: flex; justify-content: center; gap: 0; padding: 0; margin: 0;">
+                <img src="img/s1.png" style="width: 25%; margin: 0; padding: 0;" />
+                <img src="img/s2.png" style="width: 25%; margin: 0; padding: 0;" />
+                <img src="img/s3.png" style="width: 25%; margin: 0; padding: 0;" />
+                <img src="img/s4.png" style="width: 25%; margin: 0; padding: 0;" />
+              </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Bibtex</h2>
+        <hr>
+        <div class="bibtexsection">
+            @article{Shoushtari2025klmeas,
+            author={Shoushtari, Shirin
+            and Chandler, Edward P.,
+            and Wang, Yuanhao, 
+            and Asif, M. Salman,
+            and Kamilov, Ulugbek S.},
+            title={Unsupervised Detection of Distribution Shift in
+                   Inverse Problems using Diffusion Models},
+            note={arXiv:2505.11482},
+            year={2025}
+            }
+        </div>
+    </div>
+
+    <hr>
+
+   <footer>
+       <p>Acknoledgement: Web template from <a href="https://www.vincentsitzmann.com/siren/">SIREN</a> and <a href="https://www.cse.wustl.edu/~kamilov/projects/2022/decolearn/">DeCoLearn</a></p>
+   </footer>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
